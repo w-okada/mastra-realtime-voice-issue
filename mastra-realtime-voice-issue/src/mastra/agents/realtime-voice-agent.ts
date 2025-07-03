@@ -1,6 +1,7 @@
 import { Agent } from "@mastra/core/agent";
 import { OpenAIRealtimeVoice } from "@mastra/voice-openai-realtime";
 import { openai } from "@ai-sdk/openai";
+import { readWavAsInt16Array } from "./readwav";
 
 const voice = new OpenAIRealtimeVoice({
   model: "gpt-4o-mini-realtime-preview",
@@ -28,6 +29,7 @@ realtimeVoiceAgent.voice.on("writing", ({ text, role }) => {
   console.log(`${role} said(w): ${text}`);
 });
 
+
 realtimeVoiceAgent.voice.on("error", (error) => {
   console.error("Voice error:", error);
 });
@@ -37,9 +39,12 @@ await realtimeVoiceAgent.voice.connect();
 
 console.log("realtime voice start");
 realtimeVoiceAgent.voice.speak("Hello, I'm your AI assistant!");
+realtimeVoiceAgent.voice.speak("Hello, I'm your AI assistant!");  // <- here. error occurs. 
 
-console.log("realtime voice start");
-realtimeVoiceAgent.voice.speak("Hello, I'm your AI assistant!");
+
+console.log("realtime voice send...");
+const int16 = readWavAsInt16Array("../../test.wav");
+realtimeVoiceAgent.voice.send(int16.data);
 
 console.log("realtime voice fin....");
 
